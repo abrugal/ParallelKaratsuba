@@ -284,6 +284,25 @@ BigInt karatsuba(BigInt x, BigInt y)
   return res;
 }
 
+BigInt multByOneDigit(BigInt x, int v)
+{
+  BigInt res;
+
+  int carry = 0;
+
+  for (int i = 0; i < x.len(); i++)
+  {
+    int prod = x[i] * v + carry;
+    res.push_back(prod % 10);
+    carry = prod / 10;
+  }
+
+  if (carry)
+    res.push_back(carry);
+    
+  return res;
+}
+
 BigInt gradeschool(BigInt x, BigInt y)
 {
   if (x.s == "0") return x;
@@ -293,8 +312,7 @@ BigInt gradeschool(BigInt x, BigInt y)
 
   for (int i = 0; i < x.len(); i++)
   {
-    BigInt a(x[i]);
-    BigInt m = karatsuba(a, y).left_shift(i);
+    BigInt m = multByOneDigit(y, x[i]).left_shift(i);
     res = res + m;
   }
 
