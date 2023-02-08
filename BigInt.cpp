@@ -1,7 +1,12 @@
 #include <iostream>
 #include <algorithm>
+#include <thread>
+#include <future>
+#include <mutex>
+// #include <semaphore>
 #define sz(x) (int)x.size()
 #define deb(x) cout << #x << ": " << x << endl;
+#define ln '\n'
 using namespace std;
 
 struct BigInt
@@ -284,6 +289,76 @@ BigInt karatsuba(BigInt x, BigInt y)
   return res;
 }
 
+BigInt ParallelKaratsuba(BigInt x, BigInt y)
+{
+  if (x.s == "0") return x;
+  if (y.s == "0") return y;
+
+  int len = max(x.len(), y.len());
+  if (len > 1 && (len & 1)) len++;
+
+  while (x.len() < len) x.push_back(0);
+  while (y.len() < len) y.push_back(0);
+
+  if (len == 1)
+  {
+    return x[0] * y[0];
+  }
+
+  int upper = len / 2;
+  int lower = len - upper;
+
+  BigInt xh, xl, yh, yl;
+  xh.s = x.s.substr(lower, upper);
+  xl.s = x.s.substr(0, lower);
+
+  yh.s = y.s.substr(lower, upper);
+  yl.s = y.s.substr(0, lower);
+
+  // cout << xh << " " << xl << endl;
+  // cout << yh << " " << yl << endl;
+
+  // thread t1([](){
+
+  // });
+
+  promise<BigInt> pa;
+  auto fa = pa.get_future();
+  thread ta([](promise<BigInt> &&p, BigInt a, BigInt b) {
+    p.set_value(ParallelKaratsuba(a, b));
+  }, move(pa), xh, yh);
+
+  promise<BigInt> pd;
+  auto fd = pd.get_future();
+  thread td([](promise<BigInt> &&p, BigInt a, BigInt b) {
+    p.set_value(ParallelKaratsuba(a, b));
+  }, move(pd), xl, yl);
+  
+  promise<BigInt> pe;
+  auto fe = pe.get_future();
+  thread te([](promise<BigInt> &&p, BigInt a, BigInt b) {
+    p.set_value(ParallelKaratsuba(a, b));
+  }, move(pe), xh + xl, yh + yl);
+
+  ta.join();
+  td.join();
+  te.join();
+
+  BigInt a = fa.get();
+  BigInt d = fd.get();
+  BigInt e = fe.get() - a - d;
+
+  // BigInt a = karatsuba(xh, yh);
+  // BigInt d = karatsuba(xl, yl);
+  // BigInt e = karatsuba(xh + xl, yh + yl) - a - d;
+
+  BigInt res = a.left_shift(len) + e.left_shift(lower) + d;
+
+  while (res.s.back() == '0') res.s.pop_back();
+
+  return res;
+}
+
 BigInt multByOneDigit(BigInt x, int v)
 {
   BigInt res;
@@ -358,27 +433,33 @@ DONE:;
 
 int main(void)
 {
-  // BigInt a(100), b(100);
+  string s = "";
 
-  // BigInt c = karatsuba(a, b);
+  for (int i = 0; i < 100; i++)
+  {
+    s += (i % 9 + 1) + '0';
+  }
 
-  // cout << c << endl;
+  BigInt big(s);
 
-  // run_tests();
+  // BigInt res1 = karatsuba(big, big);
 
-  string s;
+  // cout << res1 << ln;
 
-  for (int i = 1; i <= 500; i++)
-    s += i % 9 + '0';
+  std::promise<BigInt> p;
+  auto f = p.get_future();
+  std::thread t([](std::promise<BigInt> &&p, BigInt big) {
+    BigInt a = big;
+    BigInt b = big;
 
-  BigInt a(s), b(s);
+    p.set_value(ParallelKaratsuba(a, b));
+  }, std::move(p), big);
 
-  BigInt res1 = karatsuba(a, b);
-  cout << res1 << endl;
-  BigInt res2 = gradeschool(a, b);
-  cout << res2 << endl;
+  t.join();
 
-  cout << (res1.s == res2.s) << endl;
+  BigInt res = f.get();
+
+  cout << res << ln;
 
   return 0;
 }
