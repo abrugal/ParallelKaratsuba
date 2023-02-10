@@ -4,6 +4,9 @@
 #include <future>
 #include <mutex>
 #include <semaphore>
+#include <vector>
+#include <chrono>
+#include <iomanip>
 #define sz(x) (int)x.size()
 #define deb(x) cout << #x << ": " << x << endl;
 #define ln '\n'
@@ -470,18 +473,17 @@ int main(void)
 {
   string s = "";
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 10000; i++)
   {
     s += (i % 9 + 1) + '0';
   }
 
   BigInt big(s);
+  // cout << big << ln;
 
-  cout << big << ln;
+  auto start = chrono::high_resolution_clock::now();
 
   BigInt res1 = karatsuba(big, big);
-
-  cout << res1 << ln;
 
   // sem.acquire();
 
@@ -497,35 +499,11 @@ int main(void)
   // t.join();
   // BigInt res = f.get();
 
-  // cout << res << ln;
+  auto stop = chrono::high_resolution_clock::now();
+  auto ms = chrono::duration_cast<chrono::milliseconds>(stop - start).count();
+  double seconds = ms / 1000.0;
 
-  // counting_semaphore sem(2);
-  // vector<thread> threads(5);
-
-  // auto go = [&](int idx)
-  // {
-  //   for (int i = 0; i < 50; i++)
-  //     cout << idx << ln;
-  //   sem.release();
-  // };
-
-  // sem.acquire();
-  // thread t1(go, 1);
-
-  // sem.acquire();
-  // thread t2(go, 2);
-
-  // sem.acquire();
-  // thread t3(go, 3);
-
-  // sem.acquire();
-  // thread t4(go, 4);
-
-  // t1.join();
-  // t2.join();
-  // t3.join();
-  // t4.join();
-  
+  cout << fixed << setprecision(5) << seconds << ln;
 
   return 0;
 }
