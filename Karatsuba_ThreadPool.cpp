@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <thread>
 #include <future>
-#include <mutex>
-#include <semaphore>
 #include <vector>
 #include <chrono>
 #include <iomanip>
@@ -15,7 +13,6 @@
 using namespace std;
 
 BS::thread_pool pool;
-counting_semaphore sem(6);
 
 string to_string(const BigInt &v)
 {
@@ -160,8 +157,6 @@ BigInt ParallelKaratsuba(BigInt x, BigInt y)
   BigInt res = a.left_shift(len) + e.left_shift(lower) + d;
 
   while (res.s.back() == '0') res.s.pop_back();
-
-  sem.release();
 
   return res;
 }
