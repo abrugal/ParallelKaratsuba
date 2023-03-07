@@ -245,48 +245,27 @@ DONE:;
 
 int main(void)
 {
-  string s = "";
+  string astr, bstr;
 
-  for (int i = 0; i < 20000; i++)
-  {
-    s += (i % 9 + 1) + '0';
-  }
+  cout << "Enter first integer: ";
+  cin >> astr;
 
-  BigInt big(s);
-  int trials = 1;
-  int64_t total_time = 0;
-  
-  auto go = [&]()
-  {
-    auto start = chrono::high_resolution_clock::now();
+  cout << "Enter second integer: ";
+  cin >> bstr;
 
-    sem.acquire();
+  BigInt a(astr), b(bstr);
 
-    promise<BigInt> p;
-    auto f = p.get_future();
-    thread t([](std::promise<BigInt> &&p, BigInt big) {
-      BigInt a = big;
-      BigInt b = big;
+  sem.acquire();
+  promise<BigInt> p;
+  auto f = p.get_future();
+  thread t([](std::promise<BigInt> &&p, BigInt a, BigInt b) {
+    p.set_value(ParallelKaratsuba(a, b));
+  }, move(p), a, b);
 
-      p.set_value(ParallelKaratsuba(a, b));
-    }, move(p), big);
+  t.join();
+  BigInt res = f.get();
 
-    t.join();
-    BigInt res = f.get();
-
-    auto stop = chrono::high_resolution_clock::now();
-    auto ms = chrono::duration_cast<chrono::milliseconds>(stop - start).count();
-    double seconds = ms / 1000.0;
-
-    // cout << fixed << setprecision(5) << seconds << ln;
-
-    total_time += ms;
-  };
-
-  for (int i = 0; i < trials; i++)
-    go();
-
-  cout << "avg: " << ((double)total_time / trials) / 1000 << endl;
+  cout << res << ln;
 
   return 0;
 }

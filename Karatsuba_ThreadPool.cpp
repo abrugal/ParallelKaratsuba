@@ -198,39 +198,24 @@ BigInt gradeschool(BigInt x, BigInt y)
 
 int main(void)
 {
-  string s = "";
+  string astr, bstr;
 
-  for (int i = 0; i < 20000; i++)
+  cout << "Enter first integer: ";
+  cin >> astr;
+
+  cout << "Enter second integer: ";
+  cin >> bstr;
+
+  BigInt a(astr), b(bstr);
+
+  auto f = pool.submit([](BigInt a, BigInt b)
   {
-    s += (i % 9 + 1) + '0';
-  }
+    return ParallelKaratsuba(a, b);
+  }, a, b);
 
-  BigInt big(s);
-  int trials = 1;
-  int64_t total_time = 0;
+  BigInt res = f.get();
 
-  auto go = [&]()
-  {
-    auto start = chrono::high_resolution_clock::now();
-
-    auto f = pool.submit([](BigInt a, BigInt b)
-    {
-      return ParallelKaratsuba(a, b);
-    }, big, big);
-
-    BigInt res = f.get();
-
-    auto stop = chrono::high_resolution_clock::now();
-    auto ms = chrono::duration_cast<chrono::milliseconds>(stop - start).count();
-    double seconds = ms / 1000.0;
-
-    total_time += ms;
-  };
-
-  for (int i = 0; i < trials; i++)
-    go();
-
-  cout << "avg: " << ((double)total_time / trials) / 1000 << endl;
+  cout << res << ln;
 
   return 0;
 }
