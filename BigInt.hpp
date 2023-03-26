@@ -2,16 +2,9 @@
 
 #include <iostream>
 #include <algorithm>
-#include <thread>
-#include <future>
-#include <mutex>
-#include <semaphore>
 #include <vector>
-#include <chrono>
 #include <iomanip>
 #define sz(x) (int)x.size()
-#define deb(x) cout << #x << ": " << x << endl;
-#define ln '\n'
 using namespace std;
 
 struct BigInt
@@ -241,3 +234,51 @@ struct BigInt
   }
   
 };
+
+BigInt multByOneDigit(BigInt x, int v)
+{
+  BigInt res;
+
+  int carry = 0;
+
+  for (int i = 0; i < x.len(); i++)
+  {
+    int prod = x[i] * v + carry;
+    res.push_back(prod % 10);
+    carry = prod / 10;
+  }
+
+  if (carry)
+    res.push_back(carry);
+    
+  return res;
+}
+
+BigInt gradeschool(BigInt x, BigInt y)
+{
+  if (x.s == "0") return x;
+  if (y.s == "0") return y;
+
+  BigInt res(0);
+
+  for (int i = 0; i < x.len(); i++)
+  {
+    BigInt m = multByOneDigit(y, x[i]).left_shift(i);
+    res = res + m;
+  }
+
+  return res;
+}
+
+string to_string(const BigInt &v)
+{
+  string s = v.s;
+  if (!v.pos && v.s != "0") s.push_back('-');
+  reverse(s.begin(), s.end());
+  return s;
+}
+
+ostream& operator<<(ostream &os, const BigInt &v)
+{
+  return (os << to_string(v));
+}

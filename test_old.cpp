@@ -3,19 +3,6 @@
 
 using namespace std;
 
-string to_string(const BigInt &v)
-{
-  string s = v.s;
-  if (!v.pos && v.s != "0") s.push_back('-');
-  reverse(s.begin(), s.end());
-  return s;
-}
-
-ostream& operator<<(ostream &os, const BigInt &v)
-{
-  return (os << to_string(v));
-}
-
 // ThreadPool
 // int main(void)
 // {
