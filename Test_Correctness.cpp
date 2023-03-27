@@ -24,10 +24,10 @@ int main(void)
     {
       BigInt a(i), b(j);
 
-      BigInt normal = gradeschool(a, b);
+      BigInt normal(i*j);
       BigInt seq = Karatsuba::karatsuba(a, b);
-      BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
-      BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
+      BigInt sem = Karatsuba_Semaphore::multiply(a, b);
+      BigInt thr = Karatsuba_ThreadPool::multiply(a, b);
 
       if (!(normal == seq && normal == sem && normal == thr)){
         cout << "FAIL: " << i << " " << j << "\n";
