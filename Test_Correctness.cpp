@@ -3,6 +3,7 @@
 #include "Karatsuba_Semaphore.hpp"
 #include "Karatsuba_Uncapped.hpp"
 #include "Karatsuba.hpp"
+#include <cstdlib>
 using namespace std;
 
 // Test Correctness
@@ -39,6 +40,27 @@ int main(void)
       */
     }
   }
+
+  int lower = 100000, upper = INT_MAX;
+    for (int i = 0; i < 5; i++)
+    {
+      BigInt a((rand() % (upper - lower + 1)) + lower);
+      BigInt b((rand() % (upper - lower + 1)) + lower);
+
+      cout << a << "\n";
+      cout << b << "\n";
+
+      BigInt normal = gradeschool(a, b);
+      BigInt seq = Karatsuba::karatsuba(a, b);
+      BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
+      BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
+
+      if (!(normal == seq && normal == sem && normal == thr)){
+        cout << "FAIL: " << a << " " << b << "\n";
+        return 0;
+      }
+    }
+
   cout << "SUCCESS\n";
   return 0;
 }
