@@ -45,6 +45,8 @@ namespace Karatsuba
 
   BigInt multiply(BigInt a, BigInt b)
   {
-    return karatsuba(a, b);
+    BigInt res = karatsuba(a, b);
+    res.pos = a.pos == b.pos;
+    return res;
   }
 }

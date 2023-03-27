@@ -13,10 +13,9 @@ using namespace std;
 
 int main(void)
 {
-
   // const auto processor_count = std::thread::hardware_concurrency();
 
-  //cout << processor_count;
+  // cout << processor_count;
 
   for (int i = -1000; i <= 1000; i++)
   {
@@ -24,12 +23,13 @@ int main(void)
     {
       BigInt a(i), b(j);
 
-      BigInt normal(i*j);
+      BigInt normal(i * j);
       BigInt seq = Karatsuba::karatsuba(a, b);
       BigInt sem = Karatsuba_Semaphore::multiply(a, b);
       BigInt thr = Karatsuba_ThreadPool::multiply(a, b);
 
-      if (!(normal == seq && normal == sem && normal == thr)){
+      if (!(normal == seq && normal == sem && normal == thr))
+      {
         cout << "FAIL: " << i << " " << j << "\n";
         return 0;
       }
@@ -42,24 +42,25 @@ int main(void)
   }
 
   int lower = 100000, upper = INT_MAX;
-    for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; i++)
+  {
+    BigInt a((rand() % (upper - lower + 1)) + lower);
+    BigInt b((rand() % (upper - lower + 1)) + lower);
+
+    cout << a << "\n";
+    cout << b << "\n";
+
+    BigInt normal = gradeschool(a, b);
+    BigInt seq = Karatsuba::karatsuba(a, b);
+    BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
+    BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
+
+    if (!(normal == seq && normal == sem && normal == thr))
     {
-      BigInt a((rand() % (upper - lower + 1)) + lower);
-      BigInt b((rand() % (upper - lower + 1)) + lower);
-
-      cout << a << "\n";
-      cout << b << "\n";
-
-      BigInt normal = gradeschool(a, b);
-      BigInt seq = Karatsuba::karatsuba(a, b);
-      BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
-      BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
-
-      if (!(normal == seq && normal == sem && normal == thr)){
-        cout << "FAIL: " << a << " " << b << "\n";
-        return 0;
-      }
+      cout << "FAIL: " << a << " " << b << "\n";
+      return 0;
     }
+  }
 
   cout << "SUCCESS\n";
   return 0;

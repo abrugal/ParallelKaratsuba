@@ -114,6 +114,9 @@ namespace Karatsuba_ThreadPool
       return ParallelKaratsuba(a, b);
     }, a, b);
 
-    return f.get();
+    BigInt res = f.get();
+    res.pos = a.pos == b.pos;
+
+    return res;
   }
 }

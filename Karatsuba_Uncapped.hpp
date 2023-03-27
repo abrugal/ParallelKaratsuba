@@ -80,6 +80,10 @@ namespace Karatsuba_Uncapped
     }, move(p), a, b);
 
     t.join();
-    return f.get();
+
+    BigInt res = f.get();
+    res.pos = a.pos == b.pos;
+
+    return res;
   }
 }

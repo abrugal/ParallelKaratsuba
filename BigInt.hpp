@@ -267,6 +267,8 @@ BigInt gradeschool(BigInt x, BigInt y)
     res = res + m;
   }
 
+  res.pos = x.pos == y.pos;
+
   return res;
 }
 

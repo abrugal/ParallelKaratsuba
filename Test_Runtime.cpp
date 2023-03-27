@@ -27,9 +27,8 @@ int main(void)
   textfile.open("output.txt");
   csv << "n,ThreadPool,Semaphore,Sequential,Grade" << endl;
 
-
-  for(int i = 0; i < 16; i++){
-
+  for (int i = 0; i < 16; i++)
+  {
     string s = "";
     int n = pow(2, i);
 
@@ -48,7 +47,7 @@ int main(void)
     int seq = sequentialTime(a, b);
     int grade = gradeTime(a, b);
     csv << n << "," << tp << "," << sem << "," << seq << "," << grade << endl;
-    
+
     textfile << "n = " << n << endl;
     textfile << "ThreadPool: " << tp << endl;
     textfile << "Semaphore: " << sem << endl;
