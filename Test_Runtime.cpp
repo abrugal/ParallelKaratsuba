@@ -5,16 +5,18 @@
 #include "Karatsuba.hpp"
 #include <cmath>
 #include <fstream>
+#include <chrono>
+
 using namespace std;
 
 // Test Runtime
 // Numbers of digits that are powers of 2, 2^0, 2^1, 2^2, ... 2 ^ 15?
 // 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768
 
-int ThreadPoolTime(int n);
-int SemaphoreTime(int n);
-int sequentialTime(int n);
-int gradeTime(int n);
+int ThreadPoolTime(BigInt a, BigInt b);
+int SemaphoreTime(BigInt a, BigInt b);
+int sequentialTime(BigInt a, BigInt b);
+int gradeTime(BigInt a, BigInt b);
 
 int main(void)
 {
@@ -27,11 +29,24 @@ int main(void)
 
 
   for(int i = 0; i < 16; i++){
+
+    string s = "";
     int n = pow(2, i);
-    int tp = ThreadPoolTime(n);
-    int sem = SemaphoreTime(n);
-    int seq = sequentialTime(n);
-    int grade = gradeTime(n);
+
+    // makes n number of digits
+    for (int x = 0; x < n; x++)
+    {
+      s += (x % 9 + 1) + '0';
+    }
+
+    BigInt big(s);
+    BigInt a = big;
+    BigInt b = big;
+
+    int tp = ThreadPoolTime(a, b);
+    int sem = SemaphoreTime(a, b);
+    int seq = sequentialTime(a, b);
+    int grade = gradeTime(a, b);
     csv << n << "," << tp << "," << sem << "," << seq << "," << grade << endl;
     
     textfile << "n = " << n << endl;
@@ -43,9 +58,8 @@ int main(void)
   }
 }
 
-int ThreadPoolTime(int n)
+int ThreadPoolTime(BigInt a, BigInt b)
 {
-  BigInt a(-n), b(n);
   auto start = std::chrono::high_resolution_clock::now();
   BigInt resTP = Karatsuba_ThreadPool::multiply(a, b);
   auto end = std::chrono::high_resolution_clock::now();
@@ -53,9 +67,8 @@ int ThreadPoolTime(int n)
   return duration.count();
 }
 
-int SemaphoreTime(int n)
+int SemaphoreTime(BigInt a, BigInt b)
 {
-  BigInt a(-n), b(n);
   auto start = std::chrono::high_resolution_clock::now();
   BigInt resSem = Karatsuba_Semaphore::multiply(a, b);
   auto end = std::chrono::high_resolution_clock::now();
@@ -63,9 +76,8 @@ int SemaphoreTime(int n)
   return duration.count();
 }
 
-int sequentialTime(int n)
+int sequentialTime(BigInt a, BigInt b)
 {
-  BigInt a(-n), b(n);
   auto start = std::chrono::high_resolution_clock::now();
   BigInt resSeq = Karatsuba::multiply(a, b);
   auto end = std::chrono::high_resolution_clock::now();
@@ -73,9 +85,8 @@ int sequentialTime(int n)
   return duration.count();
 }
 
-int gradeTime(int n)
+int gradeTime(BigInt a, BigInt b)
 {
-  BigInt a(-n), b(n);
   auto start = std::chrono::high_resolution_clock::now();
   BigInt resGrade = gradeschool(a, b);
   auto end = std::chrono::high_resolution_clock::now();
