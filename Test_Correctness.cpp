@@ -17,6 +17,8 @@ int main(void)
 
   // cout << processor_count;
 
+  srand(time(0));
+
   for (int i = -100; i <= 100; i++)
   {
     for (int j = -100; j <= 100; j++)
