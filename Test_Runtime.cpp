@@ -20,6 +20,7 @@ int gradeTime(BigInt a, BigInt b);
 
 int main(void)
 {
+  srand(time(0));
   // file output
   ofstream csv;
   ofstream textfile;
@@ -38,12 +39,9 @@ int main(void)
     // makes n number of digits
     for (int x = 0; x < n; x++)
     {
-      s += (x % 9 + 1) + '0';
-    }
+      s += (rand() % 9 + 1) + '0';
+      y += (rand() % 9 + 1) + '0';
 
-    for (int x = 0; x < n; x++)
-    {
-      y += (x % 9 + 1) + '0';
     }
 
     BigInt big(s);
