@@ -129,7 +129,8 @@ namespace Karatsuba_Semaphore
 
     BigInt res = f.get();
     res.pos = a.pos == b.pos;
-
+    
+    sem.release();
     return res;
   }
 }
