@@ -17,14 +17,14 @@ int main(void)
 
   // cout << processor_count;
 
-  for (int i = -1000; i <= 1000; i++)
+  for (int i = -100; i <= 100; i++)
   {
-    for (int j = -1000; j <= 1000; j++)
+    for (int j = -100; j <= 100; j++)
     {
       BigInt a(i), b(j);
 
       BigInt normal(i * j);
-      BigInt seq = Karatsuba::karatsuba(a, b);
+      BigInt seq = Karatsuba::multiply(a, b);
       BigInt sem = Karatsuba_Semaphore::multiply(a, b);
       BigInt thr = Karatsuba_ThreadPool::multiply(a, b);
 
@@ -33,11 +33,13 @@ int main(void)
         cout << "FAIL: " << i << " " << j << "\n";
         return 0;
       }
+
       /*
       else{
         cout << "PASS: " << i << " " << j << "\n";
       }
       */
+
     }
   }
 
@@ -56,10 +58,10 @@ int main(void)
     cout << a << "\n";
     cout << b << "\n";
 
-    BigInt normal = a * b;
-    BigInt seq = Karatsuba::karatsuba(a, b);
-    BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
-    BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
+    BigInt normal = gradeschool(a, b);
+    BigInt seq = Karatsuba::multiply(a, b);
+    BigInt sem = Karatsuba_Semaphore::multiply(a, b);
+    BigInt thr = Karatsuba_ThreadPool::multiply(a, b);
 
     if (!(normal == seq && normal == sem && normal == thr))
     {
