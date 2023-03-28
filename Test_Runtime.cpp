@@ -28,7 +28,8 @@ int main(void)
   csv << "n,ThreadPool,Semaphore,Sequential,Grade" << endl;
 
 
-  for(int i = 0; i < 16; i++){
+  for(int i = 0; i < 16; i++)
+  {
 
     string s = "";
     string y = "";
