@@ -41,16 +41,22 @@ int main(void)
     }
   }
 
-  int lower = 100000, upper = INT_MAX;
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 2; i++)
   {
-    BigInt a((rand() % (upper - lower + 1)) + lower);
-    BigInt b((rand() % (upper - lower + 1)) + lower);
+    string first = "", second = "";
+    for (int i = 0; i < 1000; i++)
+    {
+      first += (rand() % 9 + 1) + '0';
+      second += (rand() % 9 + 1) + '0';
+    }
+
+    BigInt a(first);
+    BigInt b(second);
 
     cout << a << "\n";
     cout << b << "\n";
 
-    BigInt normal = gradeschool(a, b);
+    BigInt normal = a * b;
     BigInt seq = Karatsuba::karatsuba(a, b);
     BigInt sem = Karatsuba_Semaphore::ParallelKaratsuba(a, b);
     BigInt thr = Karatsuba_ThreadPool::ParallelKaratsuba(a, b);
