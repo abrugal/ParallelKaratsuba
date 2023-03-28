@@ -27,9 +27,11 @@ int main(void)
   textfile.open("output.txt");
   csv << "n,ThreadPool,Semaphore,Sequential,Grade" << endl;
 
-  for (int i = 0; i < 16; i++)
-  {
+
+  for(int i = 0; i < 16; i++){
+
     string s = "";
+    string y = "";
     int n = pow(2, i);
 
     // makes n number of digits
@@ -38,16 +40,23 @@ int main(void)
       s += (x % 9 + 1) + '0';
     }
 
+    for (int x = 0; x < n; x++)
+    {
+      y += (x % 9 + 1) + '0';
+    }
+
     BigInt big(s);
+    BigInt big2(y);
+
     BigInt a = big;
-    BigInt b = big;
+    BigInt b = big2;
 
     int tp = ThreadPoolTime(a, b);
     int sem = SemaphoreTime(a, b);
     int seq = sequentialTime(a, b);
     int grade = gradeTime(a, b);
     csv << n << "," << tp << "," << sem << "," << seq << "," << grade << endl;
-
+    
     textfile << "n = " << n << endl;
     textfile << "ThreadPool: " << tp << endl;
     textfile << "Semaphore: " << sem << endl;
